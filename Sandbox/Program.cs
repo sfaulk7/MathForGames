@@ -1,5 +1,6 @@
 ﻿using MathLibrary;
 using Raylib_cs;
+using System.ComponentModel;
 using System.Numerics;
 using System.Security.Cryptography.X509Certificates;
 
@@ -58,15 +59,81 @@ namespace Sandbox
                 }
             }
 
-            MathLibrary.Class1 a = new MathLibrary.Class1();
-            a.Test();
+            //Raylib.InitWindow(800, 480, "Hello World");
+            //while (!Raylib.WindowShouldClose())
+            //{
+            //    Raylib.BeginDrawing();
+            //    Raylib.ClearBackground(Color.White);
+            //    CreateQuadrant1CoordinatePlane();
+            //    Raylib.EndDrawing();
+            //}
+            //Raylib.CloseWindow();
 
-            Raylib.InitWindow(800, 480, "Hello World");
+
+            Raylib.InitWindow(1600, 960, "Hello World");
+            int xPosition = 100;
+            int yPosition = 100;
+            bool cleaveActivated = false;
+            int cleaveLifetime = 0;
+            int cleaveXPosition = 10000;
+            int cleaveYPosition = 10000;
             while (!Raylib.WindowShouldClose())
             {
                 Raylib.BeginDrawing();
-                Raylib.ClearBackground(Color.White);
-                CreateQuadrant1CoordinatePlane();
+                Raylib.ClearBackground(Color.Black);
+                Raylib.SetTargetFPS(60);
+                Raylib.DrawRectangle(xPosition, yPosition, 10, 10, Color.Red);
+
+                MathLibrary.Vector2 circlePosition;
+                circlePosition = Raylib.GetMousePosition();
+                Raylib.DrawCircleLinesV(circlePosition, 10, Color.Red);
+
+                int up = Raylib.IsKeyDown(KeyboardKey.W);
+                int down = Raylib.IsKeyDown(KeyboardKey.S);
+                int left = Raylib.IsKeyDown(KeyboardKey.A);
+                int right = Raylib.IsKeyDown(KeyboardKey.D);
+
+                int speed = 5;
+                
+                yPosition -= up * speed;
+                yPosition += down * speed;
+                xPosition -= left * speed;
+                xPosition += right * speed;
+
+
+
+                
+                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                {
+                    cleaveActivated = true;
+                }
+                if (cleaveActivated == true)
+                {
+                    if (cleaveLifetime == 0)
+                    {
+                        cleaveYPosition = yPosition;
+                        cleaveXPosition = xPosition;
+                    }
+
+                    MathLibrary.Vector2 cleaveLine = Raylib.GetMousePosition();
+
+                    cleaveLine.Normalize();
+
+                    Raylib.DrawRectangle(cleaveXPosition, cleaveYPosition, 10, 5, Color.White);
+
+                    cleaveXPosition = ;
+                    cleaveYPosition = ;
+
+
+                    cleaveLifetime++;
+                    if (cleaveLifetime == 25)
+                    {
+                        cleaveActivated = false;
+                        cleaveLifetime = 0;
+                    }
+                }
+
+
                 Raylib.EndDrawing();
             }
             Raylib.CloseWindow();
@@ -81,7 +148,7 @@ namespace Sandbox
                 
                 
 
-                Vector2 circlePosition;
+                MathLibrary.Vector2 circlePosition;
 
 
 
