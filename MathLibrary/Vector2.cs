@@ -9,8 +9,9 @@ namespace MathLibrary
 {
     public struct Vector2
     {
-        float x, y;
+        public float x, y;
 
+        //
         public float Magnitude
         {
             get
@@ -20,6 +21,7 @@ namespace MathLibrary
             }
         }
 
+        //
         public Vector2 Normalized
         {
             get
@@ -28,29 +30,52 @@ namespace MathLibrary
             }
         }
 
+        //
         public Vector2(float x = 0, float y = 0)
         {
             this.x = x;
             this.y = y;
         }
 
+        //
         public Vector2 Normalize()
         {
             this = Normalized;
             return this;
         }
-
+        
+        //
         public override string ToString()
         {
             // (x, y)
             return "(" + x + ", " + y + ")";
         }
 
+        //
+        public float DotProduct(Vector2 other)
+        {
+            return (x * other.x) + (y * other.y);
+        }
+
+        //
+        public float Distance(Vector2 other)
+        {
+            return (other - this).Magnitude;
+        }
+
+        //
+        public float Angle(Vector2 other)
+        {
+            return (float)Math.Acos(other.DotProduct(this));
+        }
+
+        //
         public static bool operator ==(Vector2 left, Vector2 right)
         {
             return(left.x == right.x) && (left.y == right.y);
         }
 
+        //
         public static bool operator !=(Vector2 left, Vector2 right)
         {
             return !(left == right);
@@ -68,23 +93,11 @@ namespace MathLibrary
             return new Vector2(left.x - right.x, left.y - right.y);
         }
 
-        //Operator overload for multiplication by a vector
-        //public static Vector2 operator *(Vector2 left, Vector2 right)
-        //{
-        //    return new Vector2(left.x * right.x, left.y * right.y);
-        //}
-
         //Operator overload for multiplication by a scaler
         public static Vector2 operator *(Vector2 left, float scaler)
         {
             return new Vector2(left.x * scaler, left.y * scaler);
         }
-
-        //Operator overload for division by a vector
-        //public static Vector2 operator /(Vector2 left, Vector2 right)
-        //{
-        //    return new Vector2(left.x / right.x, left.y / right.y);
-        //}
 
         //Operator overload for division by a scaler
         public static Vector2 operator /(Vector2 left, float scaler)

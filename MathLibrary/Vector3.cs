@@ -11,6 +11,7 @@ namespace MathLibrary
     {
         float x, y, z;
 
+        //
         public float Magnitude
         {
             get
@@ -20,6 +21,7 @@ namespace MathLibrary
             }
         }
 
+        //
         public Vector3 Normalized
         {
             get
@@ -28,6 +30,7 @@ namespace MathLibrary
             }
         }
 
+        //
         public Vector3(float x = 0, float y = 0, float z = 0)
         {
             this.x = x;
@@ -35,23 +38,53 @@ namespace MathLibrary
             this.z = z;
         }
 
+        //
         public Vector3 Normalize()
         {
             this = Normalized;
             return this;
         }
 
+        //
+        public Vector3 CrossProduct(Vector3 other)
+        {
+            return new Vector3((this.y * other.z) - (this.z * other.y), (this.z * other.x) - (this.x * other.z), (this.x * other.y) - (this.y * other.x));
+        }
+
+        //
         public override string ToString()
         {
             // (x, y, z)
             return "(" + x + ", " + y + ", " + z + ")";
         }
 
+        //
+        public float DotProduct(Vector3 other)
+        {
+            return (x * other.x) + (y * other.y) + (z * other.z);
+        }
+
+        //
+        public float Distance(Vector3 other)
+        {
+            return (other - this).Magnitude;
+        }
+
+        //
+        public float Angle(Vector3 other)
+        {
+            return (float)Math.Acos(other.DotProduct(this));
+        }
+
+        
+
+        //
         public static bool operator ==(Vector3 left, Vector3 right)
         {
             return (left.x == right.x) && (left.y == right.y) && (left.z == right.z);
         }
 
+        //
         public static bool operator !=(Vector3 left, Vector3 right)
         {
             return !(left == right);
