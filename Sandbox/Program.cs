@@ -12,6 +12,11 @@ namespace Sandbox
         {
             Random rnd = new Random();
 
+            MathLibrary.Vector3 Vec1 = new MathLibrary.Vector3(6, 4, 2);
+            MathLibrary.Vector3 Vec2 = new MathLibrary.Vector3(8, 4, 7);
+            MathLibrary.Vector3 Vec3 = Vec1.CrossProduct(Vec2);
+            Console.WriteLine(Vec3);
+
             void CreateQuadrant1CoordinatePlane()
             {
                 //Draw horizontal lines
@@ -81,6 +86,7 @@ namespace Sandbox
             int hiderX = rnd.Next(100, 1500);
             int hiderY = rnd.Next(80, 880);
             
+
             MathLibrary.Vector2 hider1Position = new MathLibrary.Vector2(hiderX, hiderY * 0.25f);
             float hider1Radius = 10;
             Color hiderColor = Color.Black;
@@ -90,26 +96,13 @@ namespace Sandbox
             while (!Raylib.WindowShouldClose())
             {
                 //UPDATE
-                
+
                 //Print Hider found counter
                 Raylib.DrawText("Hiders found: " + hiderFoundCount, 10, 10, 15, Color.White);
 
                 //rehide Hider
                 if (hiderFoundTimer == 10000)
                 {
-                    int hiderJumpscare = rnd.Next(7, 7);
-                    if (hiderJumpscare == 7)
-                    {
-                        int jumpscaring = 0;
-                        while (jumpscaring < 1000)
-                        {
-
-                            Texture2D jumpscare1 = Raylib.LoadTexture("downloads/Jumpscare1.png");
-                            Raylib.DrawTexture(jumpscare1, hiderX, hiderY, Color.RayWhite);
-                            jumpscaring++;
-                        }
-                    }
-
                     hiderX = rnd.Next(100, 1500);
                     hiderY = rnd.Next(80, 880);
                     Console.WriteLine(""+ hiderX +" | "+ hiderY);
@@ -178,7 +171,7 @@ namespace Sandbox
             /// Projectile
             /// </summary>
             Raylib.InitWindow(1600, 960, "Hello World");
-            int speed = 5;
+            int speed = 250;
             int cleaveSpeed = 5;
 
             MathLibrary.Vector2 playerPosition = new MathLibrary.Vector2();
@@ -191,8 +184,8 @@ namespace Sandbox
             bool cleaveActivated = false;
             int cleaveLifetime = 0;
             MathLibrary.Vector2 cleavePosition = new MathLibrary.Vector2();
+            MathLibrary.Vector2 cleaveTarget = new MathLibrary.Vector2();
             MathLibrary.Vector2 cleaveSize = new MathLibrary.Vector2(10, 5);
-            MathLibrary.Vector2 cleaveVelocity = new MathLibrary.Vector2(1, 1) * cleaveSpeed;
             while (!Raylib.WindowShouldClose())
             {
                 //Draw Stuff
@@ -209,17 +202,14 @@ namespace Sandbox
                 mouseCirclePosition = mousePosition;
                 Raylib.DrawCircleLinesV(mouseCirclePosition, 10, Color.Red);
 
-                //Get player inputs
-                int up = Raylib.IsKeyDown(KeyboardKey.W);
-                int down = Raylib.IsKeyDown(KeyboardKey.S);
-                int left = Raylib.IsKeyDown(KeyboardKey.A);
-                int right = Raylib.IsKeyDown(KeyboardKey.D);
-                
-                //Change the Vector2 playerPosition based on player inputs
-                playerPosition.y -= up * playerVelocity.y;
-                playerPosition.y += down * playerVelocity.y;
-                playerPosition.x -= left * playerVelocity.x;
-                playerPosition.x += right * playerVelocity.x;
+                //Movement
+                MathLibrary.Vector2 movementInput = new MathLibrary.Vector2();
+                movementInput.y -= Raylib.IsKeyDown(KeyboardKey.W);
+                movementInput.x -= Raylib.IsKeyDown(KeyboardKey.A);
+                movementInput.y += Raylib.IsKeyDown(KeyboardKey.S);
+                movementInput.x += Raylib.IsKeyDown(KeyboardKey.D);
+
+                playerPosition += movementInput * speed * Raylib.GetFrameTime();
 
                 //set cleaveActivated to true if player left clicks
                 if (Raylib.IsMouseButtonPressed(MouseButton.Left))
@@ -230,26 +220,18 @@ namespace Sandbox
                 //Move the cleave projectile as long as cleaveActivated is true
                 if (cleaveActivated == true)
                 {
-
                     if (cleaveLifetime == 0)
                     {
+                        cleaveTarget = mousePosition;
                         cleavePosition = new MathLibrary.Vector2(playerPosition.x, playerPosition.y);
                     }
 
-                    //MathLibrary.Vector2 NormalizedMousePosition = MousePosition.Normalize();
-
-                    //cleaveLine -= NormalizedMousePosition * speed;
-
-                    //MathLibrary.Vector2 cleavePosition = cleaveLine;
-
-
-                    cleavePosition += cleaveVelocity;
-
+                    cleavePosition -= cleaveTarget;
 
                     Raylib.DrawRectangleV(cleavePosition, cleaveSize, Color.White);
 
-
                     cleaveLifetime++;
+
                     if (cleaveLifetime == 25)
                     {
                         cleaveActivated = false;
