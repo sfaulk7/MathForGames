@@ -107,7 +107,6 @@ namespace MathLibrary
                     a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32,
                     a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33);
         }
-
         //Matrix3 Transpose
         //public static Matrix4 operator *(Matrix4 a, Matrix4 b)
         //{
