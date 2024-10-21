@@ -46,16 +46,16 @@ namespace MathLibrary
         }
 
         //Print Matrix3
-        public static string PrintMatrix3(Matrix3 a)
+        public override string ToString()
         {
             return
-                a.m00 + "," + a.m01 + "," + a.m02 + "\n" +
-                a.m10 + "," + a.m11 + "," + a.m12 + "\n" +
-                a.m20 + "," + a.m21 + "," + a.m22 + "\n";
+                m00 + "," + m01 + "," + m02 + "\n" +
+                m10 + "," + m11 + "," + m12 + "\n" +
+                m20 + "," + m21 + "," + m22 + "\n";
         }
 
 
-        //Matrix3 Addition overload
+        //Matrix3 Addition
         public static Matrix3 operator +(Matrix3 a, Matrix3 b)
         {
             return new Matrix3(
@@ -63,7 +63,7 @@ namespace MathLibrary
                 a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12,
                 a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22);
         }
-        //Matrix3 Subtraction overload
+        //Matrix3 Subtraction
         public static Matrix3 operator -(Matrix3 a, Matrix3 b)
         {
             return new Matrix3(
@@ -71,7 +71,24 @@ namespace MathLibrary
                 a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
                 a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22);
         }
-        //Matrix3 Multiplication overload
+        //Matrix3 Multiplication
+        //public static Matrix3 operator *(Matrix3 a, Matrix3 b)
+        //{
+        //    return new Matrix3(
+        //            a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20,
+        //            a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21,
+        //            a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22,
+
+        //            a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20,
+        //            a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21,
+        //            a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22,
+
+        //            a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20,
+        //            a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21,
+        //            a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22);
+        //}
+
+        //Matrix3 Transpose
         public static Matrix3 operator *(Matrix3 a, Matrix3 b)
         {
             return new Matrix3(

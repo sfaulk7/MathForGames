@@ -10,39 +10,30 @@ namespace Sandbox
     {
         static void Main(string[] args)
         {
+            Matrix4 TestMat1 = new Matrix4(1, 2, 3, 4,
+                4, 3, 2, 1,
+                1, 2, 3, 4,
+                4, 3, 2, 1);
+            Matrix4 TestMat2 = new Matrix4(4,5,6,7,
+                7,6,5,4,
+                4,5,6,7,
+                7,6,5,4);
+
+            Matrix4 TestMatResult = new Matrix4(4, 5, 6, 7,
+                7, 6, 5, 4,
+                4, 5, 6, 7,
+                7, 6, 5, 4);
+
+            TestMatResult = TestMat1 * TestMat2;
+
+            TestMat1.ToString();
+            TestMat2.ToString();
+            TestMatResult.ToString();
+
+            Console.WriteLine(TestMat1 + "\n * \n" + TestMat2 + "\n = \n" + TestMatResult);
+
+
             Random rnd = new Random();
-
-            Matrix3 MatTest1 = new Matrix3
-                (1, 2, 3,
-                3, 2, 1,
-                1, 2, 3);
-            Console.WriteLine(
-                MatTest1.m00 + "," + MatTest1.m01 + "," + MatTest1.m02 + "\n" +
-                MatTest1.m10 + "," + MatTest1.m11 + "," + MatTest1.m12 + "\n" +
-                MatTest1.m20 + "," + MatTest1.m21 + "," + MatTest1.m22 + "\n");
-
-            Console.WriteLine("*");
-
-            Matrix3 MatTest2 = new Matrix3
-                (4, 5, 6,
-                6, 5, 4,
-                4, 6, 5);
-            Console.WriteLine(
-                MatTest2.m00 + "," + MatTest2.m01 + "," + MatTest2.m02 + "\n" +
-                MatTest2.m10 + "," + MatTest2.m11 + "," + MatTest2.m12 + "\n" +
-                MatTest2.m20 + "," + MatTest2.m21 + "," + MatTest2.m22 + "\n");
-
-            Console.WriteLine("=");
-
-            Matrix3 MatTestResult = new Matrix3(
-                0,0,0,0,0,0,0,0,0);
-            MatTestResult = MatTest1 * MatTest2;
-
-            Console.WriteLine(
-                MatTestResult.m00 + "," + MatTestResult.m01 + "," + MatTestResult.m02 + "\n" +
-                MatTestResult.m10 + "," + MatTestResult.m11 + "," + MatTestResult.m12 + "\n" +
-                MatTestResult.m20 + "," + MatTestResult.m21 + "," + MatTestResult.m22 + "\n");
-
 
             void CreateQuadrant1CoordinatePlane()
             {
@@ -112,14 +103,13 @@ namespace Sandbox
             //hider
             int hiderX = rnd.Next(100, 1500);
             int hiderY = rnd.Next(80, 880);
-            
-
             MathLibrary.Vector2 hider1Position = new MathLibrary.Vector2(hiderX, hiderY * 0.25f);
             float hider1Radius = 10;
             Color hiderColor = Color.Black;
             int hiderFoundCount = -1;
             int hiderFoundTimer = 10000;
 
+            //Game
             while (!Raylib.WindowShouldClose())
             {
                 //UPDATE
