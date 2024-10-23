@@ -10,29 +10,6 @@ namespace Sandbox
     {
         static void Main(string[] args)
         {
-            Matrix4 TestMat1 = new Matrix4(1, 2, 3, 4,
-                4, 3, 2, 1,
-                1, 2, 3, 4,
-                4, 3, 2, 1);
-            Matrix4 TestMat2 = new Matrix4(4,5,6,7,
-                7,6,5,4,
-                4,5,6,7,
-                7,6,5,4);
-
-            Matrix4 TestMatResult = new Matrix4(4, 5, 6, 7,
-                7, 6, 5, 4,
-                4, 5, 6, 7,
-                7, 6, 5, 4);
-
-            TestMatResult = TestMat1 * TestMat2;
-
-            TestMat1.ToString();
-            TestMat2.ToString();
-            TestMatResult.ToString();
-
-            Console.WriteLine(TestMat1 + "\n * \n" + TestMat2 + "\n = \n" + TestMatResult);
-
-
             Random rnd = new Random();
 
             void CreateQuadrant1CoordinatePlane()
@@ -94,9 +71,9 @@ namespace Sandbox
             MathLibrary.Vector2 seekerPosition = new MathLibrary.Vector2(screenDimensions.x * 0.5f, screenDimensions.y * 0.75f);
             float seekerSpeed = 500;
             float seekerRadius = 10;
-            float seekerViewAngle = 90;
-            float seekerViewLeft = -90 - (seekerViewAngle / 2);
-            float seekerViewRight = -90 + (seekerViewAngle / 2);
+            float seekerViewWidth = 90;
+            float seekerViewLeft = -90 - (seekerViewWidth / 2);
+            float seekerViewRight = -90 + (seekerViewWidth / 2);
             float seekerViewDistance = 200;
             MathLibrary.Vector2 seekerForward = new MathLibrary.Vector2(0, 1).Normalized;
 
@@ -114,10 +91,13 @@ namespace Sandbox
             {
                 //UPDATE
 
+                //Find mouse position
+                MathLibrary.Vector2 mousePosition = Raylib.GetMousePosition();
+
                 //Print Hider found counter
                 Raylib.DrawText("Hiders found: " + hiderFoundCount, 10, 10, 15, Color.White);
 
-                //rehide Hider
+                //Rehide Hider
                 if (hiderFoundTimer == 10000)
                 {
                     hiderX = rnd.Next(100, 1500);
@@ -139,14 +119,14 @@ namespace Sandbox
 
                 seekerPosition += movementInput * seekerSpeed * Raylib.GetFrameTime();
 
-                //Calculate LOS
+                //Calculate LineOfSight
                 MathLibrary.Vector2 seekerToHiderDirection = (seekerPosition - hider1Position).Normalized;
                 float distance = hider1Position.Distance(seekerPosition);
                 float angleTohider = (float)Math.Abs(seekerToHiderDirection.Angle(seekerForward));
 
 
                 //If hider is in sight
-                if (Math.Abs(angleTohider) < (seekerViewAngle / 2) * (Math.PI / 180) && distance < seekerViewDistance)
+                if (Math.Abs(angleTohider) < (seekerViewWidth / 2) * (Math.PI / 180) && distance < seekerViewDistance)
                 {
                     hiderColor = Color.Red;
                     hiderFoundTimer++;
@@ -176,6 +156,7 @@ namespace Sandbox
                     seekerViewRight, 
                     10, Color.Blue);
 
+                Raylib.DrawLineV(seekerPosition, mousePosition, Color.White);
 
                 Raylib.EndDrawing();
             }
@@ -278,42 +259,61 @@ namespace Sandbox
             /// Mouse attack
             /// </summary>
             Raylib.InitWindow(800, 480, "Hello World");
-            Raylib.BeginDrawing();
+            screenDimensions =
+                new MathLibrary.Vector2(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+
+            bool cleaveReleased = false;
+            bool spawnCube = true;
+            MathLibrary.Vector2 cutCubePosition = new MathLibrary.Vector2(screenDimensions.x * 0.5f, screenDimensions.y * 0.5f);
+            MathLibrary.Vector2 cutCubeSize = new MathLibrary.Vector2(50, 50);
             while (!Raylib.WindowShouldClose())
             {
-                Raylib.GetFrameTime();
+                Raylib.BeginDrawing();
+                Raylib.ClearBackground(Color.Black);
+                Raylib.SetTargetFPS(60);
+
+                MathLibrary.Vector2 mousePosition = Raylib.GetMousePosition();
+                Raylib.DrawCircleLinesV(mousePosition, 5, Color.Red);
+
+                Raylib.DrawRectangleV(cutCubePosition, cutCubeSize, Color.Red);
+
+                cleaveActivated = Raylib.IsMouseButtonDown(MouseButton.Left);
                 
-                
-
-                MathLibrary.Vector2 mouseCirclePosition;
-
-
-
-                mouseCirclePosition = Raylib.GetMousePosition();
-
-                Raylib.DrawCircle(50, 50, 10, Color.Red);
-
-                Raylib.DrawCircleLinesV(mouseCirclePosition, 5, Color.Red);
-
-                if (Raylib.IsMouseButtonDown(MouseButton.Left))
+                //Spawn Cube
+                if (spawnCube == true)
                 {
-
-                    Raylib.DrawRectangle(20, 20, 20, 20, Color.Red);
-                    
-                    Raylib.DrawCircleV(mouseCirclePosition, 10, Color.Red);
-
-                    Raylib.ClearBackground(Color.Black);
+                    Raylib.DrawRectangleV(cutCubePosition, cutCubeSize, Color.Red);
                 }
 
-                if (Raylib.IsMouseButtonReleased(MouseButton.Left))
+                spawnCube = Raylib.IsMouseButtonDown(MouseButton.Right);
+
+                //Reset cleave
+                if (cleaveActivated == false && cleaveLifetime > 0)
                 {
+                    cleaveLifetime = 0;
+                    cleaveReleased = true;
+                }
 
-                    int circleXPosition = Raylib.GetMouseX();
-                    int circleYPosition = Raylib.GetMouseY();
+                //Activate cleave
+                if (cleaveActivated == true)
+                {
+                    if (cleaveLifetime == 0)
+                    {
+                        cleaveTarget = mousePosition;
+                    }
 
+                    Raylib.DrawLineV(cleaveTarget, mousePosition, Color.RayWhite);
 
-                    Raylib.DrawCircleV(mouseCirclePosition, 10, Color.Red);
+                    cleaveLifetime++;
+                }
 
+                //Cut with cleave
+                if (cleaveReleased == true)
+                {
+                    if (cutCubePosition.y < 0.0f)
+                    {
+                        return;
+                    }
                 }
 
                 Raylib.EndDrawing();

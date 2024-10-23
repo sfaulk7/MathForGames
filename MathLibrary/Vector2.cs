@@ -99,6 +99,12 @@ namespace MathLibrary
             return new Vector2(left.x * scaler, left.y * scaler);
         }
 
+        //Operator overload for multiplication of a float by a Vector2
+        public static Vector2 operator *(float scaler, Vector2 right)
+        {
+            return new Vector2(right.x * scaler, right.y * scaler);
+        }
+
         //Operator overload for division by a scaler
         public static Vector2 operator /(Vector2 left, float scaler)
         {

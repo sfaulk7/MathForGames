@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MathLibrary
 {
-    public class Matrix4
+    public struct Matrix4
     {
         //4x4 Matrix
         public float
@@ -54,6 +54,59 @@ namespace MathLibrary
             }
         }
 
+        //Create Translation Matrix4
+        public static Matrix4 CreateTranslation(float x, float y, float z)
+        {
+            //Return Translation Matrix
+            return new Matrix4(
+                1, 0, 0, z,
+                0, 1, 0, y,
+                0, 0, 1, z,
+                0, 0, 0, 1);
+        }
+
+        //Create Rotation Matrix4
+        public static Matrix4 CreateRotationX(float radians)
+        {
+            //Return Rotation Matrix
+            return new Matrix4(
+                1, 0, 0, 0,
+                0, (float)Math.Cos(radians), ((float)Math.Sin(radians)) * -1, 0,
+                0, (float)Math.Sin(radians), (float)Math.Cos(radians), 0,
+                0, 0, 0, 1);
+        }
+        //Create Rotation Matrix4
+        public static Matrix4 CreateRotationY(float radians)
+        {
+            //Return Rotation Matrix
+            return new Matrix4(
+                (float)Math.Cos(radians), 0, (float)Math.Sin(radians), 0,
+                0, 1, 0, 0,
+                ((float)Math.Sin(radians)) * -1, 0, (float)Math.Cos(radians), 0,
+                0, 0, 0, 1);
+        }
+        //Create Rotation Matrix4
+        public static Matrix4 CreateRotationZ(float radians)
+        {
+            //Return Rotation Matrix
+            return new Matrix4(
+                (float)Math.Cos(radians), ((float)Math.Sin(radians)) * -1, 0, 0,
+                (float)Math.Sin(radians), (float)Math.Cos(radians), 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1);
+        }
+
+        //Create Scale Matrix4
+        public static Matrix4 CreateScale(float x, float y, float z)
+        {
+            //Return Scale Matrix
+            return new Matrix4(
+                x, 0, 0, 0,
+                0, y, 0, 0,
+                0, 0, z, 0,
+                0, 0, 0, 1);
+        }
+
         //Print Matrix4
         public override string ToString()
         {
@@ -83,6 +136,17 @@ namespace MathLibrary
                 a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23,
                 a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33);
         }
+
+        //Matrix4 * Vector4
+        public static Vector4 operator *(Matrix4 a, Vector4 b)
+        {
+            return new Vector4(
+                (a.m00 * b.x) + (a.m01 * b.y) + (a.m02 * b.z) + (a.m03 * b.w),
+                (a.m10 * b.x) + (a.m11 * b.y) + (a.m12 * b.z) + (a.m13 * b.w),
+                (a.m20 * b.x) + (a.m21 * b.y) + (a.m22 * b.z) + (a.m23 * b.w),
+                (a.m30 * b.x) + (a.m31 * b.y) + (a.m32 * b.z) + (a.m33 * b.w));
+        }
+
         //Matrix4 Multiplication
         public static Matrix4 operator *(Matrix4 a, Matrix4 b)
         {

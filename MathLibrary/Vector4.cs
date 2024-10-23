@@ -9,7 +9,7 @@ namespace MathLibrary
 {
     public struct Vector4
     {
-        float x, y, z, w;
+        public float x, y, z, w;
 
         //
         public float Magnitude
@@ -105,27 +105,17 @@ namespace MathLibrary
             return new Vector4(left.x - right.x, left.y - right.y, left.z - right.z, left.w - right.w);
         }
 
-
-        //Operator overload for multiplication by a vector
-        //public static Vector4 operator *(Vector4 left, Vector4 right)
-        //{
-        //    return new Vector4(left.x * right.x, left.y * right.y, left.z * right.z, left.w * right.w);
-        //}
-
-
         //Operator overload for multiplication by a scaler
         public static Vector4 operator *(Vector4 left, float scaler)
         {
             return new Vector4(left.x * scaler, left.y * scaler, left.z * scaler, left.w * scaler);
         }
 
-
-        //Operator overload for division by a vector
-        //public static Vector4 operator /(Vector4 left, Vector4 right)
-        //{
-        //    return new Vector4(left.x / right.x, left.y / right.y, left.z / right.z, left.w / right.w);
-        //}
-
+        //Operator overload for multiplication of a float by a Vector4
+        public static Vector4 operator *(float scaler, Vector4 right)
+        {
+            return new Vector4(right.x * scaler, right.y * scaler, right.z * scaler, right.w * scaler);
+        }
 
         //Operator overload for division by a scaler
         public static Vector4 operator /(Vector4 left, float scaler)
