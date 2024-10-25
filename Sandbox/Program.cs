@@ -2,6 +2,7 @@
 using Raylib_cs;
 using System.ComponentModel;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Sandbox
@@ -266,16 +267,24 @@ namespace Sandbox
             bool spawnCube = true;
             MathLibrary.Vector2 cutCubePosition = new MathLibrary.Vector2(screenDimensions.x * 0.5f, screenDimensions.y * 0.5f);
             MathLibrary.Vector2 cutCubeSize = new MathLibrary.Vector2(50, 50);
+
+
+            MathLibrary.Vector2 cutCubeCollisionPosition = new MathLibrary.Vector2(cutCubePosition.x + cutCubeSize.x /2, cutCubePosition.y + cutCubeSize.x /2);
+
             while (!Raylib.WindowShouldClose())
             {
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.Black);
                 Raylib.SetTargetFPS(60);
 
+                //Raylib.CheckCollisionPointLine();
+
                 MathLibrary.Vector2 mousePosition = Raylib.GetMousePosition();
                 Raylib.DrawCircleLinesV(mousePosition, 5, Color.Red);
 
                 Raylib.DrawRectangleV(cutCubePosition, cutCubeSize, Color.Red);
+
+                Raylib.DrawRectangleLines((int)cutCubeCollisionPosition.x, (int)cutCubeCollisionPosition.y, (int)cutCubeSize.x, (int)cutCubeSize.y, Color.Yellow);
 
                 cleaveActivated = Raylib.IsMouseButtonDown(MouseButton.Left);
                 
@@ -303,6 +312,12 @@ namespace Sandbox
                     }
 
                     Raylib.DrawLineV(cleaveTarget, mousePosition, Color.RayWhite);
+
+                    bool lineThroughCube = Raylib.CheckCollisionPointLine(cutCubeCollisionPosition, cleaveTarget, mousePosition, (int)(cutCubeSize.x + cutCubeSize.y) / 4);
+                    if (lineThroughCube == true)
+                    {
+                        Raylib.DrawText("CUT", 100, 100, 10, Color.White);
+                    }
 
                     cleaveLifetime++;
                 }
