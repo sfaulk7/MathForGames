@@ -11,6 +11,39 @@ namespace Sandbox
     {
         static void Main(string[] args)
         {
+            Raylib.InitWindow(880, 480, "Hello World");
+            Raylib.SetTargetFPS(60);
+
+            Actor a = new Actor();
+
+            Transform2D t1 = new Transform2D(a);
+            MathLibrary.Vector2 offset = new MathLibrary.Vector2(t1.LocalScale.x / 2, t1.LocalScale.y / 2);
+            t1.LocalPosition = new MathLibrary.Vector2(
+                (Raylib.GetScreenWidth() * 0.33f) - offset.x,
+                (Raylib.GetScreenHeight() * 0.33f) - offset.y);
+
+            while (!Raylib.WindowShouldClose())
+            {
+                Raylib.BeginDrawing();
+                Raylib.ClearBackground(Color.White);
+
+                t1.Translate(t1.Forward * 50 * Raylib.GetFrameTime());
+                t1.Rotate(0.5f * Raylib.GetFrameTime());
+
+                //Draw t1
+                Rectangle rect = new Rectangle(t1.GlobalPosition + offset, t1.GlobalScale);
+                Raylib.DrawRectanglePro(
+                    rect,
+                    new MathLibrary.Vector2(0,0) + offset,
+                    -t1.GlobalRotationAngle * (180 / (float)Math.PI),
+                    Color.Blue);
+
+                Raylib.DrawLineV(t1.GlobalPosition + offset, t1.GlobalPosition + offset + (t1.Forward * 100), Color.Red);
+
+
+                Raylib.EndDrawing();
+            }
+
             Random rnd = new Random();
 
             void CreateQuadrant1CoordinatePlane()
@@ -61,6 +94,7 @@ namespace Sandbox
                 }
             }
 
+            #region Luigi's Mansion: Dark Moon 3
             /// <summary>
             /// Luigi's Mansion: Dark Moon 3
             /// </summary>
@@ -110,7 +144,7 @@ namespace Sandbox
 
                     Console.WriteLine("Hider is at x:" + hiderX + " y:" + hiderY);
                 }
-                
+
                 //Movement
                 MathLibrary.Vector2 movementInput = new MathLibrary.Vector2();
                 movementInput.y -= Raylib.IsKeyDown(KeyboardKey.W);
@@ -154,7 +188,7 @@ namespace Sandbox
                 Raylib.DrawCircleSectorLines(seekerPosition,
                     seekerViewDistance,
                     seekerViewLeft,
-                    seekerViewRight, 
+                    seekerViewRight,
                     10, Color.Blue);
 
                 Raylib.DrawLineV(seekerPosition, mousePosition, Color.White);
@@ -162,11 +196,13 @@ namespace Sandbox
                 Raylib.EndDrawing();
             }
             Raylib.CloseWindow();
+            #endregion
 
 
 
 
 
+            #region Projectile
             /// <summary>
             /// Projectile
             /// </summary>
@@ -175,7 +211,7 @@ namespace Sandbox
             int cleaveSpeed = 5;
 
             MathLibrary.Vector2 playerPosition = new MathLibrary.Vector2();
-            MathLibrary.Vector2 playerSize = new MathLibrary.Vector2(10,10);
+            MathLibrary.Vector2 playerSize = new MathLibrary.Vector2(10, 10);
             MathLibrary.Vector2 playerVelocity = new MathLibrary.Vector2(1, 1) * speed;
 
             int xPosition = 100;
@@ -251,11 +287,13 @@ namespace Sandbox
                 Raylib.EndDrawing();
             }
             Raylib.CloseWindow();
+            #endregion
 
 
 
 
 
+            #region Mouse Attack
             /// <summary>
             /// Mouse attack
             /// </summary>
@@ -264,20 +302,23 @@ namespace Sandbox
                 new MathLibrary.Vector2(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
 
             bool cleaveReleased = false;
+            bool cleaveCut = false;
+            bool cleaveEnded = true;
             bool spawnCube = true;
             MathLibrary.Vector2 cutCubePosition = new MathLibrary.Vector2(screenDimensions.x * 0.5f, screenDimensions.y * 0.5f);
             MathLibrary.Vector2 cutCubeSize = new MathLibrary.Vector2(50, 50);
+            MathLibrary.Vector2 cutPoint1 = new MathLibrary.Vector2(1, 1);
+            MathLibrary.Vector2 cutPoint2 = new MathLibrary.Vector2(1, 1);
 
+            MathLibrary.Vector2 cutCubeCollisionPosition = new MathLibrary.Vector2(cutCubePosition.x, cutCubePosition.y);
 
-            MathLibrary.Vector2 cutCubeCollisionPosition = new MathLibrary.Vector2(cutCubePosition.x + cutCubeSize.x /2, cutCubePosition.y + cutCubeSize.x /2);
+            MathLibrary.Vector2 fixer = new MathLibrary.Vector2(1, 1);
 
             while (!Raylib.WindowShouldClose())
             {
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.Black);
                 Raylib.SetTargetFPS(60);
-
-                //Raylib.CheckCollisionPointLine();
 
                 MathLibrary.Vector2 mousePosition = Raylib.GetMousePosition();
                 Raylib.DrawCircleLinesV(mousePosition, 5, Color.Red);
@@ -286,8 +327,8 @@ namespace Sandbox
 
                 Raylib.DrawRectangleLines((int)cutCubeCollisionPosition.x, (int)cutCubeCollisionPosition.y, (int)cutCubeSize.x, (int)cutCubeSize.y, Color.Yellow);
 
-                cleaveActivated = Raylib.IsMouseButtonDown(MouseButton.Left);
                 
+
                 //Spawn Cube
                 if (spawnCube == true)
                 {
@@ -296,12 +337,7 @@ namespace Sandbox
 
                 spawnCube = Raylib.IsMouseButtonDown(MouseButton.Right);
 
-                //Reset cleave
-                if (cleaveActivated == false && cleaveLifetime > 0)
-                {
-                    cleaveLifetime = 0;
-                    cleaveReleased = true;
-                }
+                
 
                 //Activate cleave
                 if (cleaveActivated == true)
@@ -311,29 +347,127 @@ namespace Sandbox
                         cleaveTarget = mousePosition;
                     }
 
-                    Raylib.DrawLineV(cleaveTarget, mousePosition, Color.RayWhite);
+                    cleaveEnded = Raylib.IsMouseButtonDown(MouseButton.Left);
 
-                    bool lineThroughCube = Raylib.CheckCollisionPointLine(cutCubeCollisionPosition, cleaveTarget, mousePosition, (int)(cutCubeSize.x + cutCubeSize.y) / 4);
-                    if (lineThroughCube == true)
+                    //Raylib.DrawLineV(cleaveTarget, mousePosition, Color.RayWhite);
+
+                    int scaler = 1;
+                    for (int i = 0; i < ((cutCubeSize.x + cutCubeSize.y) / 2) / scaler; i++)
                     {
-                        Raylib.DrawText("CUT", 100, 100, 10, Color.White);
+                        cleaveCut = false;
+
+                        bool lineThroughCubeTop = false;
+                        bool lineThroughCubeLeft = false;
+                        bool lineThroughCubeRight = false;
+                        bool lineThroughCubeBottom = false;
+
+                        MathLibrary.Vector2 cutCubeCutPointTop = new MathLibrary.Vector2(cutCubeCollisionPosition.x + (scaler * i), cutCubeCollisionPosition.y);
+                        MathLibrary.Vector2 cutCubeCutPointLeft = new MathLibrary.Vector2(cutCubeCollisionPosition.x, cutCubeCollisionPosition.y + (scaler * i));
+                        MathLibrary.Vector2 cutCubeCutPointRight = new MathLibrary.Vector2(cutCubeCollisionPosition.x + cutCubeSize.x, cutCubeCollisionPosition.y + (scaler * i));
+                        MathLibrary.Vector2 cutCubeCutPointBottom = new MathLibrary.Vector2(cutCubeCollisionPosition.x + (scaler * i), cutCubeCollisionPosition.y + cutCubeSize.y);
+
+                        lineThroughCubeTop = Raylib.CheckCollisionPointLine(cutCubeCutPointTop, cleaveTarget, mousePosition, 1);
+                        lineThroughCubeLeft = Raylib.CheckCollisionPointLine(cutCubeCutPointLeft, cleaveTarget, mousePosition, 1);
+                        lineThroughCubeRight = Raylib.CheckCollisionPointLine(cutCubeCutPointRight, cleaveTarget, mousePosition, 1);
+                        lineThroughCubeBottom = Raylib.CheckCollisionPointLine(cutCubeCutPointBottom, cleaveTarget, mousePosition, 1);
+
+                        if (lineThroughCubeTop)
+                            Raylib.DrawCircleV(cutCubeCutPointTop, scaler, Color.White);
+                        else
+                            Raylib.DrawCircleV(cutCubeCutPointTop, scaler, Color.Blue);
+
+                        if (lineThroughCubeLeft)
+                            Raylib.DrawCircleV(cutCubeCutPointLeft, scaler, Color.White);
+                        else
+                            Raylib.DrawCircleV(cutCubeCutPointLeft, scaler, Color.Blue);
+
+                        if (lineThroughCubeRight)
+                            Raylib.DrawCircleV(cutCubeCutPointRight, scaler, Color.White);
+                        else
+                            Raylib.DrawCircleV(cutCubeCutPointRight, scaler, Color.Blue);
+
+                        if (lineThroughCubeBottom)
+                            Raylib.DrawCircleV(cutCubeCutPointBottom, scaler, Color.White);
+                        else
+                            Raylib.DrawCircleV(cutCubeCutPointBottom, scaler, Color.Blue);
+
+                        if (lineThroughCubeTop == true)
+                        {
+                            Raylib.DrawText("CUT TOP", 100, 100, 10, Color.White);
+                            if (cleaveEnded == false)
+                            {
+                                cutPoint1 = cutCubeCutPointTop;
+
+                                cutPoint2 = cutCubeCutPointTop;
+                            }
+                        }
+
+                        if (lineThroughCubeLeft == true)
+                        {
+                            Raylib.DrawText("CUT LEFT", 100, 120, 10, Color.White);
+                            if (cleaveEnded == false)
+                            {
+                                cutPoint1 = cutCubeCutPointTop;
+
+                                cutPoint2 = cutCubeCutPointTop;
+                            }
+                        }
+
+                        if (lineThroughCubeRight == true)
+                        {
+                            Raylib.DrawText("CUT RIGHT", 100, 140, 10, Color.White);
+                            if (cleaveEnded == false)
+                            {
+                                cutPoint1 = cutCubeCutPointTop;
+
+                                cutPoint2 = cutCubeCutPointTop;
+                            }
+                        }
+
+                        if (lineThroughCubeBottom == true)
+                        {
+                            Raylib.DrawText("CUT BOTTOM", 100, 160, 10, Color.White);
+                            if (cleaveEnded == false)
+                            {
+                                cutPoint1 = cutCubeCutPointTop;
+
+                                cutPoint2 = cutCubeCutPointTop;
+                            }
+                        }
+                        
+                        if (cleaveEnded == false)
+                        {
+                            Raylib.DrawLineV(cutPoint1, cutPoint2, Color.White);
+                            cleaveCut = true;
+                            break;
+                        }
+                        
                     }
+
+                    
 
                     cleaveLifetime++;
                 }
 
-                //Cut with cleave
-                if (cleaveReleased == true)
+                cleaveActivated = Raylib.IsMouseButtonDown(MouseButton.Left);
+
+                //Reset cleave
+                if (cleaveActivated == false && cleaveLifetime > 0)
                 {
-                    if (cutCubePosition.y < 0.0f)
-                    {
-                        return;
-                    }
+                    cleaveLifetime = 0;
+                    cleaveReleased = true;
+                }
+
+
+                if (cleaveCut == true)
+                {
+                    Raylib.DrawLineV(cutPoint1, cutPoint2, Color.White);
                 }
 
                 Raylib.EndDrawing();
             }
             Raylib.CloseWindow();
+            #endregion
         }
     }
 }
