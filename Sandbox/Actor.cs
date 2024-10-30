@@ -8,6 +8,5 @@ namespace Sandbox
 {
     internal class Actor
     {
-
     }
 }

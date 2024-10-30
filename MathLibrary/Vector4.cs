@@ -26,6 +26,10 @@ namespace MathLibrary
         {
             get
             {
+                if (Magnitude == 0)
+                {
+                    return new Vector4();
+                }
                 return this / Magnitude;
             }
         }
